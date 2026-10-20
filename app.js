@@ -104,8 +104,6 @@ function quiz(id, flags) {
     const box = b.parentElement; if (box.classList.contains('done')) return;
     const k = +box.parentElement.dataset.k, q = qs[k], o = +b.dataset.o, ok = o === q.a;
     ans[k] = o; mark(box, q, o); store.set(q.id, ok); box.classList.add('w');
-    b.classList.add(ok ? 'pop' : 'shake');
-    if (!ok) box.querySelector('.ok').classList.add('pop');
     const done = Object.keys(ans).length, right = Object.entries(ans).filter(([kk, a]) => a === qs[kk].a).length;
     $('#cnt').textContent = done; $('#ok').textContent = right;
     $('.qbar .prog i').style.width = done / qs.length * 100 + '%';
