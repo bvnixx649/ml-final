@@ -139,3 +139,9 @@ input[type=range]{width:100%;accent-color:var(--acc);height:32px}
 .seg a{flex:1;text-align:center;padding:12px;border-radius:12px;background:var(--panel);font-weight:600}
 .seg a.on{background:var(--acc);color:#fff}
 .empty{color:var(--mut);text-align:center;padding:60px 0}
+.qbar{position:sticky;z-index:15;margin:0 -16px;padding:8px 16px;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.qbar:empty{display:none}
+.qbar .pr{display:flex;align-items:center;gap:12px}
+.qbar .filters{padding:8px 0 2px}
+.qbar .filters button.on{background:var(--c);color:#fff}
+.gsec{font-size:24px;margin:36px 0 0;scroll-margin-top:140px}
