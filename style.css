@@ -145,3 +145,4 @@ input[type=range]{width:100%;accent-color:var(--acc);height:32px}
 .qbar .filters{padding:8px 0 2px}
 .qbar .filters button.on{background:var(--c);color:#fff}
 .gsec{font-size:24px;margin:36px 0 0;scroll-margin-top:140px}
+.done.w .opt:not(.bad) .why{display:none}

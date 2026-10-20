@@ -103,7 +103,7 @@ function quiz(id, flags) {
     const b = e.target.closest('.opt'); if (!b) return;
     const box = b.parentElement; if (box.classList.contains('done')) return;
     const k = +box.parentElement.dataset.k, q = qs[k], o = +b.dataset.o, ok = o === q.a;
-    ans[k] = o; mark(box, q, o); store.set(q.id, ok);
+    ans[k] = o; mark(box, q, o); store.set(q.id, ok); if (!ok) box.classList.add('w');
     b.classList.add(ok ? 'pop' : 'shake');
     if (!ok) box.querySelector('.ok').classList.add('pop');
     const done = Object.keys(ans).length, right = Object.entries(ans).filter(([kk, a]) => a === qs[kk].a).length;
