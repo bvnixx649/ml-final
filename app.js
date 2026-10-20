@@ -107,35 +107,29 @@ function exam(id) {
   if (!qs.length) return home();
   theme(T[id] ? id : null);
   const orders = qs.map(() => shuffle([0, 1, 2, 3])), ans = {};
-  app.innerHTML = `<div class="lhead"><h1>${id === 'all' ? 'สอบจำลอง' : T[id].name}</h1><p>${qs.length} ข้อ เลือกให้ครบแล้วกดส่ง จะเห็นเฉลยและเหตุผลทุกข้อ</p></div>
-  ${qs.map((q, k) => `<div class="ex-q" data-k="${k}"><span class="qtag">${k + 1}. ${T[q.t].name}</span><p class="q">${q.q}</p><div class="opts">${optHTML(q, orders[k])}</div></div>`).join('')}`;
+  app.innerHTML = `<div class="lhead"><h1>${id === 'all' ? 'สอบจำลอง' : T[id].name}</h1><p>${qs.length} ข้อ กดช้อยส์แล้วเห็นเฉลยกับเหตุผลทันที</p></div>
+  ${qs.map((q, k) => `<div class="ex-q" data-k="${k}"><span class="qtag">${k + 1}. ${T[q.t].name}</span><p class="q">${q.q}</p><div class="opts">${optHTML(q, orders[k])}</div></div>`).join('')}
+  <div id="sum"></div>`;
   const bar = document.createElement('div'); bar.className = 'submit';
-  bar.innerHTML = `<div class="in"><span>ตอบแล้ว <b id="cnt">0</b>/${qs.length}</span><button class="big">ส่งคำตอบ</button></div>`;
+  bar.innerHTML = `<div class="in"><span>ถูก <b id="ok" style="color:var(--ok)">0</b> ผิด <b id="ng" style="color:var(--bad)">0</b> จาก ${qs.length}</span><a class="big" href="#/x/${id}" onclick="setTimeout(route)" style="text-align:center">ชุดใหม่</a></div>`;
   document.body.append(bar);
+  const summary = () => {
+    const per = {}; let right = 0;
+    qs.forEach((q, k) => { const ok = ans[k] === q.a; if (ok) right++; (per[q.t] ||= [0, 0])[1]++; if (ok) per[q.t][0]++; });
+    $('#sum').innerHTML = `<div class="score"><div class="n">${right}/${qs.length}</div><p>ตอบถูก ${Math.round(right / qs.length * 100)}%</p></div>
+    <div class="bd">${Object.entries(per).map(([t, [a, n]]) => `<div style="--c:${COLOR[t]}"><span>${T[t].name}</span><b>${a}/${n}</b><div class="meter"><i style="width:${a / n * 100}%"></i></div></div>`).join('')}</div>`;
+  };
   app.onclick = e => {
     const b = e.target.closest('.opt'); if (!b) return;
     const box = b.parentElement; if (box.classList.contains('done')) return;
-    const k = +box.parentElement.dataset.k;
-    box.querySelectorAll('.opt').forEach(x => x.classList.toggle('sel', x === b));
-    ans[k] = +b.dataset.o; $('#cnt').textContent = Object.keys(ans).length;
-  };
-  bar.querySelector('.big').onclick = () => {
-    const left = qs.length - Object.keys(ans).length;
-    if (left && !confirm(`ยังไม่ได้ตอบ ${left} ข้อ ส่งเลยไหม`)) return;
-    app.onclick = null; bar.remove();
-    let right = 0; const per = {};
-    qs.forEach((q, k) => {
-      const box = app.querySelector(`[data-k="${k}"] .opts`), ok = ans[k] === q.a;
-      box.querySelectorAll('.opt').forEach(x => x.classList.remove('sel'));
-      mark(box, q, ans[k]); if (k in ans) store.set(q.id, ok);
-      if (ok) right++;
-      (per[q.t] ||= [0, 0])[1]++; if (ok) per[q.t][0]++;
-    });
-    const head = document.createElement('div');
-    head.innerHTML = `<div class="score"><div class="n">${right}/${qs.length}</div><p>ตอบถูก ${Math.round(right / qs.length * 100)}% เลื่อนลงดูเหตุผลทุกข้อ</p></div>
-    <div class="bd">${Object.entries(per).map(([t, [a, n]]) => `<div style="--c:${COLOR[t]}"><span>${T[t].name}</span><b>${a}/${n}</b><div class="meter"><i style="width:${a / n * 100}%"></i></div></div>`).join('')}</div>
-    <a class="next-lesson" href="#/x/${id}" onclick="setTimeout(route)">ทำชุดใหม่</a>`;
-    app.prepend(head); scrollTo({top: 0, behavior: 'smooth'});
+    const k = +box.parentElement.dataset.k, q = qs[k], o = +b.dataset.o, ok = o === q.a;
+    ans[k] = o; mark(box, q, o); store.set(q.id, ok);
+    b.classList.add(ok ? 'pop' : 'shake');
+    if (!ok) box.querySelector('.ok').classList.add('pop');
+    const v = Object.values(ans);
+    const right = Object.entries(ans).filter(([kk, a]) => a === qs[kk].a).length;
+    $('#ok').textContent = right; $('#ng').textContent = v.length - right;
+    if (v.length === qs.length) summary();
   };
 }
 
